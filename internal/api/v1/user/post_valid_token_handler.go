@@ -39,7 +39,7 @@ func (h *PostValidTokenHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interfac
 
 func (h *PostValidTokenHandler) invoke(ctx *context.Ctx, req *PostValidTokenHandlerRequest) (interface{}, int, error) {
 	// Validate the token
-	auth, err := h.authSelectByTokenQuery(ctx.SqlStore, req.Token)
+	auth, err := h.authSelectByTokenQuery(ctx.App.SqlStore, req.Token)
 	if errors.Is(err, authdb.ErrNotFound) {
 		return nil, fiber.StatusUnauthorized, errors.Wrap(err, "user: PostValidTokenHandler.invoke h.authSelectByTokenQuery error")
 	}
@@ -52,7 +52,7 @@ func (h *PostValidTokenHandler) invoke(ctx *context.Ctx, req *PostValidTokenHand
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "user: PostValidTokenHandler.invoke h.parseToken error")
 	}
 
-	userRecord, err := h.userSelectByEmailQuery(ctx.SqlStore, claims.Email)
+	userRecord, err := h.userSelectByEmailQuery(ctx.App.SqlStore, claims.Email)
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "user: PostValidTokenHandler.invoke h.userSelectByEmailQuery error")
 	}

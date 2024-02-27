@@ -50,7 +50,7 @@ func (h *PostLoginHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, 
 }
 
 func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest) (interface{}, int, error) {
-	user, err := h.userSelectByEmailQuery(ctx.SqlStore, req.Email)
+	user, err := h.userSelectByEmailQuery(ctx.App.SqlStore, req.Email)
 	if errors.Is(err, userdb.ErrNotFound) {
 		return nil, fiber.StatusNotFound, nil
 	}
@@ -77,7 +77,7 @@ func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "auth: PostLoginHandler.invoke token.SignedString error")
 	}
 
-	err = h.authUpsertQuery(ctx.SqlStore, &authdb.Record{
+	err = h.authUpsertQuery(ctx.App.SqlStore, &authdb.Record{
 		UserID:    user.ID,
 		Token:     signedToken,
 		Blacklist: false,

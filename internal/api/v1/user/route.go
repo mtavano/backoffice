@@ -6,8 +6,8 @@ import (
 
 	"github.com/darchlabs/backoffice/internal/api/context"
 	v1 "github.com/darchlabs/backoffice/internal/api/v1"
-	"github.com/darchlabs/backoffice/internal/storage/apikey"
 	authdb "github.com/darchlabs/backoffice/internal/storage/auth"
+	profiledb "github.com/darchlabs/backoffice/internal/storage/profile"
 	userdb "github.com/darchlabs/backoffice/internal/storage/user"
 	"github.com/darchlabs/backoffice/pkg/client"
 	"github.com/darchlabs/backoffice/pkg/middleware"
@@ -16,11 +16,16 @@ import (
 
 func Route(basePath string, ctx *context.Ctx) {
 	// handlers
+
+	// SIGNUP
 	postSignupHandler := &PostSignupHandler{
+		secretKey:       ctx.App.Config.SecretKey,
 		userInsertQuery: userdb.InsertQuery,
 		idGenerate:      uuid.NewString,
+		authUpsertQuery: authdb.UpsertQuery,
 	}
 
+	// LOGIN
 	postLoginHandler := &PostLoginHandler{
 		secretKey:              ctx.App.Config.SecretKey,
 		userSelectByEmailQuery: userdb.SelectByEmailQuery,
@@ -33,16 +38,12 @@ func Route(basePath string, ctx *context.Ctx) {
 		userSelectByEmailQuery: userdb.SelectByEmailQuery,
 	}
 
-	postApiKeyHandler := &PostApiKeyHandler{
-		secretKey:              ctx.App.Config.SecretKey,
-		idGenerate:             uuid.NewString,
-		apikeyInsertQuery:      apikey.InsertQuery,
-		authSelectByTokenQuery: authdb.SelectByTokenQuery,
+	putProfileHandler := &PutProfileHandler{
+		profileUpsertQuery: profiledb.UpsertQuery,
 	}
 
-	postValidApiKeyHandler := &PostValidApiKeyHandler{
-		secretKey:                ctx.App.Config.SecretKey,
-		apikeySelectByTokenQuery: apikey.SelectByTokenQuery,
+	getProfileHandler := &GetProfileHandler{
+		selectProfileQuery: profiledb.SelectQuery,
 	}
 
 	// setup middleware
@@ -54,13 +55,28 @@ func Route(basePath string, ctx *context.Ctx) {
 	auth := middleware.NewAuth(cl)
 
 	// route
-	ctx.Server.Post(fmt.Sprintf("%s/signup", basePath), v1.HandleFunc(ctx, postSignupHandler.Invoke))
-	ctx.Server.Post(fmt.Sprintf("%s/login", basePath), v1.HandleFunc(ctx, postLoginHandler.Invoke))
-	ctx.Server.Post(fmt.Sprintf("%s/tokens", basePath), v1.HandleFunc(ctx, postValidTokenHandler.Invoke))
 	ctx.Server.Post(
-		fmt.Sprintf("%s/api-key", basePath),
-		auth.Middleware,
-		v1.HandleFunc(ctx, postApiKeyHandler.Invoke),
+		fmt.Sprintf("%s/signup", basePath),
+		v1.HandleFunc(ctx, postSignupHandler.Invoke),
 	)
-	ctx.Server.Post(fmt.Sprintf("%s/valid-api-key", basePath), v1.HandleFunc(ctx, postValidApiKeyHandler.Invoke))
+	ctx.Server.Post(
+		fmt.Sprintf("%s/login", basePath),
+		v1.HandleFunc(ctx, postLoginHandler.Invoke),
+	)
+	ctx.Server.Post(
+		fmt.Sprintf("%s/tokens", basePath),
+		v1.HandleFunc(ctx, postValidTokenHandler.Invoke),
+	)
+	r1 := fmt.Sprintf("%s/profiles", basePath)
+	fmt.Println("000000000.....>>>>>>> ", r1)
+	ctx.Server.Get(
+		r1,
+		v1.HandleFunc(ctx, getProfileHandler.Invoke),
+	)
+
+	ctx.Server.Put(
+		fmt.Sprintf("%s/profiles", basePath),
+		auth.Middleware,
+		v1.HandleFunc(ctx, putProfileHandler.Invoke),
+	)
 }

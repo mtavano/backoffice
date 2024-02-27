@@ -6,6 +6,7 @@ import (
 	"github.com/darchlabs/backoffice/internal/storage"
 	"github.com/darchlabs/backoffice/internal/storage/apikey"
 	"github.com/darchlabs/backoffice/internal/storage/auth"
+	"github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/darchlabs/backoffice/internal/storage/user"
 	userdb "github.com/darchlabs/backoffice/internal/storage/user"
 	"github.com/golang-jwt/jwt"
@@ -27,6 +28,10 @@ type authSelectByTokenQuery func(storage.Transaction, string) (*auth.Record, err
 type apikeyInsertQuery func(storage.QueryContext, *apikey.Record) error
 
 type apikeySelectByTokenQuery func(tx storage.Transaction, token string) (*apikey.Record, error)
+
+type profileUpsertQuery func(storage.Transaction, *profile.UpsertProfileInput) (*profile.Record, error)
+
+type selectProfileQuery func(storage.Transaction, *profile.SelectFilters) (*profile.Record, error)
 
 func parseToken(secretKey, tokenString string) (*loginClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &loginClaims{}, func(token *jwt.Token) (interface{}, error) {

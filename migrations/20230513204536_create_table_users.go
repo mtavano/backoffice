@@ -16,7 +16,7 @@ func upCreateTableUsers(tx *sql.Tx) error {
 		CREATE TABLE users (
 			id TEXT PRIMARY KEY NOT NULL,
 			email TEXT NOT NULL UNIQUE,
-			name TEXT NOT NULL,
+			nickname TEXT UNIQUE NOT NULL,
 			hashed_password TEXT NOT NULL,
 			verified BOOLEAN DEFAULT false,
 			created_at TIMESTAMPTZ NOT NULL,

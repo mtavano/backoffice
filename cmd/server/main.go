@@ -18,19 +18,19 @@ import (
 )
 
 func main() {
-	log.Println("Starting DarchLabs backoffice")
+	log.Println("Starting B-Cards backoffice")
 	conf := &config.Config{}
 	err := envconfig.Process("", conf)
 	check(err)
 
-	log.Printf("Database postgresql connection [DarchLabs backoffice]\n")
+	log.Printf("Database postgresql connection [B-Cards backoffice]\n")
 	sqlStore, err := storage.NewSQLStore(conf.DBDriver, conf.DBDsn)
 	check(err)
 
 	err = goose.Up(sqlStore.DB.DB, "migrations/")
 	check(err)
 
-	log.Println("Starting DarchLabs backoffice")
+	log.Println("Starting B-Cards backoffice")
 	app, err := application.New(&application.Config{
 		Config:   conf,
 		SqlStore: sqlStore,
@@ -42,7 +42,7 @@ func main() {
 		App:  app,
 	})
 
-	log.Printf("Starting [DarchLabs backoffice]\n")
+	log.Printf("Starting [B-Cards backoffice]\n")
 	err = server.Start(app)
 	check(err)
 

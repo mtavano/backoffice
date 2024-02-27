@@ -1,4 +1,4 @@
-package user
+package metric
 
 import (
 	"github.com/darchlabs/backoffice/internal/storage"
@@ -7,19 +7,15 @@ import (
 
 func InsertQuery(tx storage.QueryContext, record *Record) error {
 	_, err := tx.Exec(`
-		INSERT INTO users (
-			id,
-			email,
-			nickname,
-			hashed_password,
-			verified,
+		INSERT INTO metrics (
+			user_id,
+			profile_id,
+			prints,
 			created_at
-		) VALUES ($1, $2, $3, $4, $5, $6);`,
-		record.ID,
-		record.Email,
-		record.Nickname,
-		record.HashedPassword,
-		record.Verified,
+		) VALUES ($1, $2, $3, $4);`,
+		record.UserID,
+		record.ProfileID,
+		record.Prints,
 		record.CreatedAt,
 	)
 	if err != nil {

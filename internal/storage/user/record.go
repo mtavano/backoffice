@@ -5,7 +5,7 @@ import "time"
 type Record struct {
 	ID             string     `db:"id"`
 	Email          string     `db:"email"`
-	Name           string     `db:"name"`
+	Nickname       string     `db:"nickname"`
 	HashedPassword string     `db:"hashed_password"`
 	Verified       bool       `db:"verified"`
 	CreatedAt      time.Time  `db:"created_at"`

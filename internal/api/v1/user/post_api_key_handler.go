@@ -72,7 +72,7 @@ func (h *PostApiKeyHandler) invoke(ctx *context.Ctx, req *postApiKeyHandlerReque
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "auth: PostApiKeyHandler.invoke token.SignedString error")
 	}
 
-	err = h.apikeyInsertQuery(ctx.SqlStore, &apikey.Record{
+	err = h.apikeyInsertQuery(ctx.App.SqlStore, &apikey.Record{
 		ID:        h.idGenerate(),
 		UserID:    req.UserID,
 		Token:     signedApiKey,

@@ -38,7 +38,7 @@ func (h *PostValidApiKeyHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interfa
 
 func (h *PostValidApiKeyHandler) invoke(ctx *context.Ctx, req *PostValidApiKeyHandlerRequest) (interface{}, int, error) {
 	// Validate the token
-	apiKey, err := h.apikeySelectByTokenQuery(ctx.SqlStore, req.ApiKey)
+	apiKey, err := h.apikeySelectByTokenQuery(ctx.App.SqlStore, req.ApiKey)
 	if errors.Is(err, authdb.ErrNotFound) {
 		return nil, fiber.StatusUnauthorized, errors.Wrap(err, "user: PostValidApiKeyHandler.invoke h.apikeySelectByTokenQuery error")
 	}

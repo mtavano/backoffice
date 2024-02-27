@@ -42,9 +42,8 @@ func NewServer(config *ServerConfig) *Server {
 func (s *Server) Start(app *application.App) error {
 	go func() {
 		ctx := context.New(&context.Config{
-			Server:   s.server,
-			App:      s.app,
-			SqlStore: app.SqlStore,
+			Server: s.server,
+			App:    s.app,
 		})
 		// route endpoints
 		v1.HealthRoute(ctx)
