@@ -16,7 +16,7 @@ type PutProfileHandler struct {
 
 type PutProfileRequest struct {
 	UserID  string `json:"-"`
-	ShortID string `json:"short_id"`
+	ShortID string `json:"-"`
 
 	Linkedin *string `json:"linkedin"`
 	Email    *string `json:"email"`
@@ -33,12 +33,8 @@ func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 	}
 
 	var req PutProfileRequest
-	err = c.BodyParser(&req)
-	if err != nil {
-		return nil, fiber.StatusBadRequest, errors.Wrap(err, "bad request error")
-	}
-
-	if req.ShortID == "" {
+	shortID := c.Params("short_id")
+	if shortID == "" {
 		return nil, fiber.StatusBadRequest, errors.New("invalid operation. missing id")
 	}
 

@@ -3,8 +3,9 @@ package profile
 import "time"
 
 type Record struct {
-	UserID  string `db:"user_id"`
-	ShortID string `db:"short_id"`
+	UserID   string `db:"user_id"`
+	ShortID  string `db:"short_id"`
+	Nickname string `db:"-"`
 
 	// Social network links
 	Linkedin *string `db:"linkedin"`

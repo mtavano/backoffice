@@ -5,7 +5,7 @@ type Config struct {
 	SecretKey   string `envconfig:"environment" required:"true"`
 
 	// Server config
-	ApiServerPort string `envconfig:"api_server_port" required:"true"`
+	ApiServerPort string `envconfig:"port" required:"true"`
 
 	// Database related
 	DBDriver        string `envconfig:"db_driver" required:"true"`

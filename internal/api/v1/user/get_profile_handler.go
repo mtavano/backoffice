@@ -16,29 +16,30 @@ type GetProfileHandler struct {
 }
 
 type getProfileHandlerResponse struct {
-	ShortID string `json:"short_id"`
+	Nickname string `json:"nickname"`
+	ShortID  string `json:"shortId"`
 
 	// Social network links
 	Linkedin *string `json:"linkedin"`
 	Email    *string `json:"email"`
 	Whatsapp *string `json:"whatsapp"`
 	Medium   *string `json:"medium"`
-	TwitterX *string `json:"twitter_x"`
+	TwitterX *string `json:"twitterX"`
 	Website  *string `json:"website"`
 
 	// Non available fort the moment
 	//Image string `json:"image"`
 
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
 func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
-	fmt.Println("~~~~~> here 1")
 	shortID := c.Query("sid")
 	nickname := c.Query("nn")
+	fmt.Println(">>>>>> sid", shortID)
+	fmt.Println(">>>>>> nn", nickname)
 
-	fmt.Println("~~~~~> here")
 	profile, err := h.selectProfileQuery(ctx.App.SqlStore, &profile.SelectFilters{
 		ShortID:  shortID,
 		Nickname: nickname,
@@ -53,6 +54,7 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 	fmt.Printf("2. %+v\n", err)
 
 	return &getProfileHandlerResponse{
+		Nickname:  profile.Nickname,
 		ShortID:   profile.ShortID,
 		Linkedin:  profile.Linkedin,
 		Email:     profile.Email,

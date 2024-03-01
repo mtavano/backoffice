@@ -67,10 +67,8 @@ func Route(basePath string, ctx *context.Ctx) {
 		fmt.Sprintf("%s/tokens", basePath),
 		v1.HandleFunc(ctx, postValidTokenHandler.Invoke),
 	)
-	r1 := fmt.Sprintf("%s/profiles", basePath)
-	fmt.Println("000000000.....>>>>>>> ", r1)
 	ctx.Server.Get(
-		r1,
+		fmt.Sprintf("%s/profiles/:short_id?", basePath),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
 	)
 
