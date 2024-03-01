@@ -24,8 +24,8 @@ Status: 200
 ```json
 {
 	"email": "jdoe@gmail.com",
-	"name": "jon doe",
-	"password": "password124"
+	"nickname": "schecoperez",
+	"password": "fuck.max1234"
 }
 ```
 
@@ -34,7 +34,9 @@ Status: 200
 Status: 201
 
 ```json
-null
+{
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Impkb2VAZ21haWwuY29tIiwiZXhwIjoxNzE5MTU3MjczfQ.MfaT_5lrapX4sapI992uQodW0xHsbv4UeNf0guCUEaA"
+}
 ```
 
 #### **POST /api/v1/users/login**
@@ -58,13 +60,27 @@ Status: 201
 }
 ```
 
-#### **POST /api/v1/users/api-key**
+
+#### **PUT /api/v1/users/profiles/{short_id}**
+
+Authorization: `Yes`
+
+This endpoint expects an Authorization header with Bearer tooken schema
+
+This endpoint works as an upsert in background. To perform an upsert the `short_id` must be present as path param. This because the `short_id` will be on the nfc card.
+
+The server wil only update the fields present in the request.
 
 **Request**
 
 ```json
 {
-	"days_interval": 30
+	"linkedin": "https://linkedin.com/@/schecoperez",
+	"email": "schp@redbullracing.com",
+	"whatsapp": "+56989040598",
+	"medium": "https://blog.medium.com/me/schecoperez",
+	"twitterX": "https://x.com/profiles/schecoperez",
+	"website": "https://elropeselaco.me"
 }
 ```
 
@@ -74,46 +90,52 @@ Status: 201
 
 ```json
 {
-	"api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImY1ZTNiNTQyLWMwY2ItNDJmMi1hMjJlLWNlOWNkMGQzMTk3YyIsImV4cCI6MTY4ODExMjY3OX0.VXjFWxHXlW_TlkZ4HN_n0PmGqiaC9-O38LNWKHN1e2A"
+	"profile": {
+		"UserID": "3adaeaa9-9f72-421f-981f-1ce06d3561aa",
+		"ShortID": "abdExsk",
+		"Linkedin": "https://linkedin.com/@/schecoperez",
+		"Email": "schp@redbullracing.com",
+		"Whatsapp": null,
+		"Medium": null,
+		"TwitterX": null,
+		"Website": null,
+		"Image": "",
+		"CreatedAt": "2024-02-27T02:57:29.600586Z",
+		"UpdatedAt": "2024-02-27T02:58:21.879074Z",
+		"DeletedAt": null
+	},
+	"status": "updated"
 }
 ```
 
-#### **POST /api/v1/users/tokens**
+
+#### **Get /api/v1/users/profiles**
+
+This endpoint enables two ways for retrieving a profile. You can use either `short_id` or `nickname`
 
 **Request**
 
-```json
-{
-	"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Impkb2VAZ21haWwuY29tIiwiZXhwIjoxNzE3MDU1MDIwfQ.1ifMxIZ1wnNAjU2i-Kx7iEALVoIFaUrAQfWLAiLFnds"
-}
-```
+Query params available
+
+1. **`sid`**: this query enables search by **short_id**
+2. **`nn`**: this query enables search by **nickname**
 
 **Response**
 
-Status: 200
+Status: 201
 
 ```json
 {
-	"user_id": "f5e3b542-c0cb-42f2-a22e-ce9cd0d3197c"
+	"shortId": "abdExsk",
+	"nickname": "schecoperez",
+	"linkedin": "https://linkedin.com/@/schecoperez",
+	"email": "schp@redbullracing.com",
+	"whatsapp": null,
+	"medium": null,
+	"twitterX": null,
+	"website": null,
+	"createdAt": "0001-01-01T00:00:00Z",
+	"updatedAt": null
 }
 ```
 
-#### **POST /api/v1/users/valid-api-key**
-
-**Request**
-
-```json
-{
-	"api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImY1ZTNiNTQyLWMwY2ItNDJmMi1hMjJlLWNlOWNkMGQzMTk3YyIsImV4cCI6MTY4ODExMjY3OX0.VXjFWxHXlW_TlkZ4HN_n0PmGqiaC9-O38LNWKHN1e2A"
-}
-```
-
-**Response**
-
-Status: 200
-
-```json
-{
-	"user_id": "f5e3b542-c0cb-42f2-a22e-ce9cd0d3197c"
-}
-```
