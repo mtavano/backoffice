@@ -6,6 +6,7 @@ import (
 	"github.com/darchlabs/backoffice/internal/storage"
 	"github.com/darchlabs/backoffice/internal/storage/apikey"
 	"github.com/darchlabs/backoffice/internal/storage/auth"
+	"github.com/darchlabs/backoffice/internal/storage/cards"
 	"github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/darchlabs/backoffice/internal/storage/user"
 	userdb "github.com/darchlabs/backoffice/internal/storage/user"
@@ -32,6 +33,8 @@ type apikeySelectByTokenQuery func(tx storage.Transaction, token string) (*apike
 type profileUpsertQuery func(storage.Transaction, *profile.UpsertProfileInput) (*profile.Record, error)
 
 type selectProfileQuery func(storage.Transaction, *profile.SelectFilters) (*profile.Record, error)
+
+type selectCardsQuery func(storage.Transaction, string) (*cards.Record, error)
 
 func parseToken(secretKey, tokenString string) (*loginClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &loginClaims{}, func(token *jwt.Token) (interface{}, error) {

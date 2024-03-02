@@ -3,6 +3,7 @@ package config
 type Config struct {
 	Environment string `envconfig:"environment" required:"true"`
 	SecretKey   string `envconfig:"environment" required:"true"`
+	AdminKey    string `envconfig:"admin_key" required:"true"`
 
 	// Server config
 	ApiServerPort string `envconfig:"port" required:"true"`

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/darchlabs/backoffice/internal/api/admin"
 	"github.com/darchlabs/backoffice/internal/api/context"
 	v1 "github.com/darchlabs/backoffice/internal/api/v1"
 	"github.com/darchlabs/backoffice/internal/api/v1/user"
@@ -48,6 +49,7 @@ func (s *Server) Start(app *application.App) error {
 		// route endpoints
 		v1.HealthRoute(ctx)
 		user.Route("/api/v1/users", ctx)
+		admin.Route("/admin", ctx)
 
 		s.server.Get("/api/v1/health", v1.HandleFunc(
 			ctx,

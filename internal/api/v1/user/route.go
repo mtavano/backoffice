@@ -7,6 +7,7 @@ import (
 	"github.com/darchlabs/backoffice/internal/api/context"
 	v1 "github.com/darchlabs/backoffice/internal/api/v1"
 	authdb "github.com/darchlabs/backoffice/internal/storage/auth"
+	cardsdb "github.com/darchlabs/backoffice/internal/storage/cards"
 	profiledb "github.com/darchlabs/backoffice/internal/storage/profile"
 	userdb "github.com/darchlabs/backoffice/internal/storage/user"
 	"github.com/darchlabs/backoffice/pkg/client"
@@ -44,6 +45,7 @@ func Route(basePath string, ctx *context.Ctx) {
 
 	getProfileHandler := &GetProfileHandler{
 		selectProfileQuery: profiledb.SelectQuery,
+		selectCardsQuery:   cardsdb.SelectQuery,
 	}
 
 	// setup middleware
@@ -68,7 +70,7 @@ func Route(basePath string, ctx *context.Ctx) {
 		v1.HandleFunc(ctx, postValidTokenHandler.Invoke),
 	)
 	ctx.Server.Get(
-		fmt.Sprintf("%s/profiles/:short_id?", basePath),
+		fmt.Sprintf("%s/profiles", basePath),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
 	)
 

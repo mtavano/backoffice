@@ -3,30 +3,28 @@ package context
 import (
 	"github.com/darchlabs/backoffice/internal/application"
 	"github.com/gofiber/fiber/v2"
+	"github.com/teris-io/shortid"
 )
+
+type shortIDGen func() (string, error)
 
 type Ctx struct {
 	// structs
-	Server *fiber.App
-	App    *application.App
-
-	// interfaces
-	//SqlStore storage.SQL
+	Server           *fiber.App
+	App              *application.App
+	ShortIDGenerator shortIDGen
 }
 
 type Config struct {
 	// stucts
 	Server *fiber.App
 	App    *application.App
-
-	// interfaces
-	//SqlStore storage.SQL
 }
 
 func New(conf *Config) *Ctx {
 	return &Ctx{
-		Server: conf.Server,
-		App:    conf.App,
-		//SqlStore: conf.SqlStore,
+		Server:           conf.Server,
+		App:              conf.App,
+		ShortIDGenerator: shortid.Generate,
 	}
 }
