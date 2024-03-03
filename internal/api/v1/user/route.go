@@ -48,6 +48,10 @@ func Route(basePath string, ctx *context.Ctx) {
 		selectCardsQuery:   cardsdb.SelectQuery,
 	}
 
+	getNicknameAvailabilityHandler := &GetNicknameAvailabilityHandler{
+		selectUserByNickname: userdb.SelectByNicknameQuery,
+	}
+
 	// setup middleware
 	cl := client.New(&client.Config{
 		Client:  http.DefaultClient,
@@ -57,6 +61,10 @@ func Route(basePath string, ctx *context.Ctx) {
 	auth := middleware.NewAuth(cl)
 
 	// route
+	ctx.Server.Get(
+		fmt.Sprintf("%s/:nickname", basePath),
+		v1.HandleFunc(ctx, getNicknameAvailabilityHandler.Invoke),
+	)
 	ctx.Server.Post(
 		fmt.Sprintf("%s/signup", basePath),
 		v1.HandleFunc(ctx, postSignupHandler.Invoke),
@@ -73,7 +81,6 @@ func Route(basePath string, ctx *context.Ctx) {
 		fmt.Sprintf("%s/profiles", basePath),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
 	)
-
 	ctx.Server.Put(
 		fmt.Sprintf("%s/profiles", basePath),
 		auth.Middleware,

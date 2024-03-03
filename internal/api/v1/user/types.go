@@ -34,6 +34,8 @@ type profileUpsertQuery func(storage.Transaction, *profile.UpsertProfileInput) (
 
 type selectProfileQuery func(storage.Transaction, *profile.SelectFilters) (*profile.Record, error)
 
+type selectUserByNickname func(storage.Transaction, string) (*user.Record, error)
+
 type selectCardsQuery func(storage.Transaction, string) (*cards.Record, error)
 
 func parseToken(secretKey, tokenString string) (*loginClaims, error) {

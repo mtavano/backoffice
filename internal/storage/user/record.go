@@ -1,6 +1,9 @@
 package user
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Record struct {
 	ID             string     `db:"id"`
@@ -12,3 +15,7 @@ type Record struct {
 	UpdatedAt      *time.Time `db:"updated_at"`
 	DeletedAt      *time.Time `db:"deleted_at"`
 }
+
+var (
+	ErrNotFound = errors.New("user: user not found")
+)

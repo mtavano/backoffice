@@ -8,7 +8,7 @@ DarchLabs backoffice api
 
 #### **GET /admin/cards**
 
-This endpoint shouldhave `x-admin-key` header with admin key string
+This endpoint should have `x-admin-key` header with admin key string
 
 **Request**
 
@@ -54,6 +54,17 @@ Status: 200
 	"status": "running"
 }
 ```
+
+#### **GET /api/v1/users/{nickname}**
+
+**Response**
+
+```json
+{
+	"available": true | false
+}
+```
+
 
 #### **POST /api/v1/users/signup**
 
