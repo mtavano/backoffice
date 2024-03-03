@@ -4,6 +4,44 @@ DarchLabs backoffice api
 
 ### API spec
 
+### Admin routes
+
+#### **GET /admin/cards**
+
+This endpoint shouldhave `x-admin-key` header with admin key string
+
+**Request**
+
+
+```json
+{
+	"totalCards": 10
+}
+```
+
+
+**Response**
+
+Status: 200
+
+```json
+{
+	"shortIds": [
+		"WfDOhz0IR",
+		"WBDO2z0SRz",
+		"ZBvOhzASgm",
+		"WBvd2zAIRZ",
+		"ZBDOhkASgM",
+		"WBDO2kASR7",
+		"ZBvOhkASgV",
+		"WBDO2k0SgI",
+		"ZBvOhk0IRN",
+		"WfvOhz0Sgv"
+	]
+}
+```
+
+
 
 #### **GET /api/v1/health**
 
