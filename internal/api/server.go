@@ -10,6 +10,7 @@ import (
 	"github.com/darchlabs/backoffice/internal/api/v1/user"
 	"github.com/darchlabs/backoffice/internal/application"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -31,6 +32,11 @@ func NewServer(config *ServerConfig) *Server {
 		Format:     "[${ip}]:${port} ${status} - ${method} ${path}\n",
 		TimeFormat: "2006-01-02 15:04:05",
 		Output:     os.Stdout,
+	}))
+	// Or extend your config for customization
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "*",
 	}))
 
 	return &Server{
