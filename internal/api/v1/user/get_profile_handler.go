@@ -50,8 +50,6 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 		Nickname: nickname,
 	})
 	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
-		fmt.Println("00000000000 ", err.Error())
-		fmt.Println("00000000000 ", errors.Is(err, profiledb.ErrNoProfile))
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
 
