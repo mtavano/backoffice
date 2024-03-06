@@ -1,6 +1,11 @@
 package profile
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrNoProfile = errors.New("profile: no profile erro")
 
 type Record struct {
 	UserID   string `db:"user_id"`

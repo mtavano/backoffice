@@ -2,7 +2,6 @@ package profile
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/darchlabs/backoffice/internal/storage"
 	"github.com/pkg/errors"
@@ -17,11 +16,8 @@ func SelectQuery(tx storage.Transaction, filters *SelectFilters) (*Record, error
 	if filters.ShortID != "" {
 		return selectByShortID(tx, filters.ShortID)
 	}
-	if filters.Nickname != "" {
-		return selectByNickname(tx, filters.Nickname)
-	}
 
-	return nil, sql.ErrNoRows
+	return selectByNickname(tx, filters.Nickname)
 }
 
 func selectByShortID(tx storage.Transaction, shortID string) (*Record, error) {
@@ -44,7 +40,6 @@ func selectByShortID(tx storage.Transaction, shortID string) (*Record, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "profile: SelectByNickname tx.Get error")
 	}
-	fmt.Println("record ", record)
 
 	return &record, nil
 }
@@ -72,6 +67,9 @@ func selectByNickname(tx storage.Transaction, nickname string) (*Record, error) 
     u.nickname = $1;`,
 		nickname,
 	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrNoProfile
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "profile: SelectByNickname tx.Get error")
 	}

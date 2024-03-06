@@ -62,7 +62,7 @@ func Route(basePath string, ctx *context.Ctx) {
 
 	// route
 	ctx.Server.Get(
-		fmt.Sprintf("%s/:nickname", basePath),
+		fmt.Sprintf("%s/nn/:nickname", basePath),
 		v1.HandleFunc(ctx, getNicknameAvailabilityHandler.Invoke),
 	)
 	ctx.Server.Post(
@@ -77,12 +77,13 @@ func Route(basePath string, ctx *context.Ctx) {
 		fmt.Sprintf("%s/tokens", basePath),
 		v1.HandleFunc(ctx, postValidTokenHandler.Invoke),
 	)
+	fmt.Printf("%s/profiles\n", basePath)
 	ctx.Server.Get(
 		fmt.Sprintf("%s/profiles", basePath),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
 	)
 	ctx.Server.Put(
-		fmt.Sprintf("%s/profiles", basePath),
+		fmt.Sprintf("%s/profiles/:short_id", basePath),
 		auth.Middleware,
 		v1.HandleFunc(ctx, putProfileHandler.Invoke),
 	)

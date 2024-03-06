@@ -14,6 +14,7 @@ require (
 	github.com/pressly/goose/v3 v3.11.2
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	golang.org/x/crypto v0.21.0
+	golang.org/x/text v0.14.0
 )
 
 require (

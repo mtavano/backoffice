@@ -1,12 +1,14 @@
 package user
 
 import (
-	"database/sql"
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/darchlabs/backoffice/internal/api/context"
 	"github.com/darchlabs/backoffice/internal/storage/cards"
-	"github.com/darchlabs/backoffice/internal/storage/profile"
+	cardsdb "github.com/darchlabs/backoffice/internal/storage/cards"
+	profiledb "github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
@@ -39,12 +41,38 @@ type getProfileHandlerResponse struct {
 func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
 	shortID := c.Query("sid")
 	nickname := c.Query("nn")
+	log.Printf("[pkg: user] GetProfileHandler.Invoke [short_id: '%s'] [nickname: '%s'] ", shortID, nickname)
 
-	card, err := h.selectCardsQuery(ctx.App.SqlStore, shortID)
+	var profile *profiledb.Record
+	var card *cardsdb.Record
+	profile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
+		ShortID:  shortID,
+		Nickname: nickname,
+	})
+	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
+		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
+	}
+
+	if profile == nil && shortID == "" {
+		return nil, fiber.StatusNotFound, nil
+	}
+
+	var sid string
+	switch true {
+	case profile != nil:
+		sid = profile.ShortID
+		break
+	case shortID != "":
+		sid = shortID
+		break
+	}
+
+	card, err = h.selectCardsQuery(ctx.App.SqlStore, sid)
 	if errors.Is(err, cards.ErrNoCard) {
 		return nil, fiber.StatusNotFound, nil
 	}
 	if err != nil {
+		fmt.Println("HERE 2")
 		return nil, fiber.StatusInternalServerError, errors.Wrap(
 			err, "user: GetProfileHandler.Invoke h.selectCardsQuery error",
 		)
@@ -53,17 +81,6 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 		return &getProfileHandlerResponse{
 			Status: card.Status,
 		}, fiber.StatusOK, nil
-	}
-
-	profile, err := h.selectProfileQuery(ctx.App.SqlStore, &profile.SelectFilters{
-		ShortID:  shortID,
-		Nickname: nickname,
-	})
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, fiber.StatusNotFound, nil
-	}
-	if err != nil {
-		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
 
 	return &getProfileHandlerResponse{
