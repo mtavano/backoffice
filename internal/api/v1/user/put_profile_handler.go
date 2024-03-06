@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/darchlabs/backoffice/internal/api/context"
@@ -51,7 +50,6 @@ func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 
 	req.UserID = userID
 	req.ShortID = shortID
-	fmt.Printf("request: %+v\n", req)
 
 	return h.invoke(ctx, &req)
 }

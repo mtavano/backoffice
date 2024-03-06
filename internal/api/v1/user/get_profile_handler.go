@@ -18,10 +18,17 @@ type GetProfileHandler struct {
 	selectCardsQuery   selectCardsQuery
 }
 
+type getProfileHandlerRequest struct {
+	ShortID  string
+	Nickname string
+	UserID   string
+}
+
 type getProfileHandlerResponse struct {
 	Status   string `json:"status"`
 	Nickname string `json:"nickname,omitemtpy"`
 	ShortID  string `json:"shortId,omitemtpy"`
+	Owner    bool   `json:"owner"`
 
 	// Social network links
 	Linkedin *string `json:"linkedin,omitemtpy"`
@@ -43,27 +50,40 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 	nickname := c.Query("nn")
 	log.Printf("[pkg: user] GetProfileHandler.Invoke [short_id: '%s'] [nickname: '%s'] ", shortID, nickname)
 
+	userID, _ := context.GetUserIDFromRequestCtx(c)
+	fmt.Println("0------- ", userID)
+
+	return h.invoke(ctx, &getProfileHandlerRequest{
+		ShortID:  shortID,
+		Nickname: nickname,
+		UserID:   userID,
+	})
+
+}
+
+func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerRequest) (interface{}, int, error) {
 	var profile *profiledb.Record
 	var card *cardsdb.Record
 	profile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
-		ShortID:  shortID,
-		Nickname: nickname,
+		ShortID:  req.ShortID,
+		Nickname: req.Nickname,
 	})
 	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
 
-	if profile == nil && shortID == "" {
+	if profile == nil && req.ShortID == "" {
 		return nil, fiber.StatusNotFound, nil
 	}
 
 	var sid string
+
 	switch true {
 	case profile != nil:
 		sid = profile.ShortID
 		break
-	case shortID != "":
-		sid = shortID
+	case req.ShortID != "":
+		sid = req.ShortID
 		break
 	}
 
@@ -85,6 +105,7 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 
 	return &getProfileHandlerResponse{
 		Status:    card.Status,
+		Owner:     req.UserID == profile.UserID, // TODO: fix me
 		Nickname:  profile.Nickname,
 		ShortID:   profile.ShortID,
 		Linkedin:  profile.Linkedin,

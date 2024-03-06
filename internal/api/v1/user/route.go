@@ -82,11 +82,12 @@ func Route(basePath string, ctx *context.Ctx) {
 	fmt.Printf("%s/profiles\n", basePath)
 	ctx.Server.Get(
 		fmt.Sprintf("%s/profiles", basePath),
+		auth.Middleware(false),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
 	)
 	ctx.Server.Put(
 		fmt.Sprintf("%s/profiles/:short_id", basePath),
-		auth.Middleware,
+		auth.Middleware(true),
 		v1.HandleFunc(ctx, putProfileHandler.Invoke),
 	)
 }
