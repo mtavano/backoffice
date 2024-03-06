@@ -23,12 +23,12 @@ type PutProfileRequest struct {
 	UserID  string `json:"-"`
 	ShortID string `json:"-"`
 
-	Linkedin string `json:"linkedin"`
-	Email    string `json:"email"`
-	Whatsapp string `json:"whatsapp"`
-	Medium   string `json:"medium"`
-	TwitterX string `json:"twitterX"`
-	Website  string `json:"website"`
+	Linkedin *string `json:"linkedin,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Whatsapp *string `json:"whatsapp,omitempty"`
+	Medium   *string `json:"medium,omitempty"`
+	TwitterX *string `json:"twitterX,omitempty"`
+	Website  *string `json:"website,omitempty"`
 }
 
 func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
@@ -72,20 +72,23 @@ func (h *PutProfileHandler) invoke(
 		Time:    time.Now(),
 	}
 
-	if req.Linkedin != "" {
-		input.Linkedin = &req.Linkedin
+	if req.Linkedin != nil {
+		input.Linkedin = req.Linkedin
 	}
-	if req.Email != "" {
-		input.Email = &req.Email
+	if req.Email != nil {
+		input.Email = req.Email
 	}
-	if req.Whatsapp != "" {
-		input.Whatsapp = &req.Whatsapp
+	if req.Whatsapp != nil {
+		input.Whatsapp = req.Whatsapp
 	}
-	if req.Medium != "" {
-		input.Medium = &req.Medium
+	if req.Medium != nil {
+		input.Medium = req.Medium
 	}
-	if req.Whatsapp != "" {
-		input.Whatsapp = &req.Whatsapp
+	if req.Whatsapp != nil {
+		input.Whatsapp = req.Whatsapp
+	}
+	if req.TwitterX != nil {
+		input.TwitterX = req.TwitterX
 	}
 
 	r, err := h.upsertProfileQuery(ctx.App.SqlStore, input)
