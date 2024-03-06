@@ -100,7 +100,8 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 	}
 	if card.Status == cards.StatusFree {
 		return &getProfileHandlerResponse{
-			Status: card.Status,
+			Status:  card.Status,
+			ShortID: card.ShortID,
 		}, fiber.StatusOK, nil
 	}
 

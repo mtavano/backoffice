@@ -65,6 +65,7 @@ func (h *PutProfileHandler) invoke(
 		return nil, fiber.StatusForbidden, nil
 	}
 	if err != nil {
+		log.Println("card error")
 		return nil, fiber.StatusInternalServerError, nil
 	}
 
