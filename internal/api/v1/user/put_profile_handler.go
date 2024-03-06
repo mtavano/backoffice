@@ -5,15 +5,19 @@ import (
 	"time"
 
 	"github.com/darchlabs/backoffice/internal/api/context"
+	"github.com/darchlabs/backoffice/internal/storage"
 	cardsdb "github.com/darchlabs/backoffice/internal/storage/cards"
 	"github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
+type updateCardQuery func(storage.QueryContext, string) error
+
 type PutProfileHandler struct {
 	upsertProfileQuery  profileUpsertQuery
 	selectCardByShortID selectCardsQuery
+	updateCardQuery     updateCardQuery
 }
 
 type PutProfileRequest struct {
@@ -88,7 +92,12 @@ func (h *PutProfileHandler) invoke(
 
 	r, err := h.upsertProfileQuery(ctx.App.SqlStore, input)
 	if err != nil {
-		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "cannot put record error")
+		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "cannot put profile record error")
+	}
+
+	err = h.updateCardQuery(ctx.App.SqlStore, req.ShortID)
+	if err != nil {
+		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "cannot update card record error")
 	}
 
 	presented, status, err := ctx.PresentRecord(r, fiber.StatusOK)
