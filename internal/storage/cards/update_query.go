@@ -7,7 +7,7 @@ import (
 
 func UpdateQuery(qc storage.QueryContext, shortID string) error {
 	_, err := qc.Exec(`
-		UPDATE FROM cards
+		UPDATE cards
 		SET status = 'claimed'
 		WHERE short_id = $1;`,
 		shortID,
