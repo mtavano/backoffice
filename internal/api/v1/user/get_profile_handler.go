@@ -29,6 +29,7 @@ type getProfileHandlerResponse struct {
 	Nickname string `json:"nickname,omitemtpy"`
 	ShortID  string `json:"shortId,omitemtpy"`
 	Owner    bool   `json:"owner"`
+	CanClaim bool   `json:"canClaim"` // TODO: fillme
 
 	// Social network links
 	Linkedin *string `json:"linkedin,omitemtpy"`

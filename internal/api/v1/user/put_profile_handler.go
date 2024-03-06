@@ -1,6 +1,7 @@
 package user
 
 import (
+	"log"
 	"time"
 
 	"github.com/darchlabs/backoffice/internal/api/context"
@@ -60,6 +61,7 @@ func (h *PutProfileHandler) invoke(
 	// query by short_id and return not allowed
 	_, err := h.selectCardByShortID(ctx.App.SqlStore, req.ShortID)
 	if errors.Is(err, cardsdb.ErrNoCard) {
+		log.Println("card not found")
 		return nil, fiber.StatusForbidden, nil
 	}
 	if err != nil {
