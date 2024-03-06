@@ -40,7 +40,8 @@ func Route(basePath string, ctx *context.Ctx) {
 	}
 
 	putProfileHandler := &PutProfileHandler{
-		profileUpsertQuery: profiledb.UpsertQuery,
+		upsertProfileQuery:  profiledb.UpsertQuery,
+		selectCardByShortID: cardsdb.SelectQuery,
 	}
 
 	getProfileHandler := &GetProfileHandler{

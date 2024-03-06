@@ -27,6 +27,9 @@ func selectByShortID(tx storage.Transaction, shortID string) (*Record, error) {
 		FROM profiles
 		WHERE short_id = $1;
 	`, shortID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrNoProfile
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "profile: SelectByNickname tx.Get error")
 	}

@@ -5,13 +5,15 @@ import (
 	"time"
 
 	"github.com/darchlabs/backoffice/internal/api/context"
+	cardsdb "github.com/darchlabs/backoffice/internal/storage/cards"
 	"github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
 type PutProfileHandler struct {
-	profileUpsertQuery profileUpsertQuery
+	upsertProfileQuery  profileUpsertQuery
+	selectCardByShortID selectCardsQuery
 }
 
 type PutProfileRequest struct {
@@ -53,6 +55,15 @@ func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 func (h *PutProfileHandler) invoke(
 	ctx *context.Ctx, req *PutProfileRequest,
 ) (interface{}, int, error) {
+	// query by short_id and return not allowed
+	_, err := h.selectCardByShortID(ctx.App.SqlStore, req.ShortID)
+	if errors.Is(err, cardsdb.ErrNoCard) {
+		return nil, fiber.StatusForbidden, nil
+	}
+	if err != nil {
+		return nil, fiber.StatusInternalServerError, nil
+	}
+
 	input := &profile.UpsertProfileInput{
 		UserID:  req.UserID,
 		ShortID: req.ShortID,
@@ -75,7 +86,7 @@ func (h *PutProfileHandler) invoke(
 		input.Whatsapp = &req.Whatsapp
 	}
 
-	r, err := h.profileUpsertQuery(ctx.App.SqlStore, input)
+	r, err := h.upsertProfileQuery(ctx.App.SqlStore, input)
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "cannot put record error")
 	}

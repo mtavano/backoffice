@@ -23,6 +23,7 @@ type UpsertProfileInput struct {
 }
 
 func UpsertQuery(tx storage.Transaction, input *UpsertProfileInput) (*Record, error) {
+	// mark card as claimed
 	var record Record
 	err := tx.Get(&record, `
 		INSERT INTO profiles (
