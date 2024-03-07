@@ -22,7 +22,7 @@ type Record struct {
 	Nickname    *string `db:"nickname"`
 
 	// Non available fort the moment
-	Image string `db:"image"`
+	Image *string `db:"image"`
 
 	CreatedAt time.Time  `db:"created_at"`
 	UpdatedAt *time.Time `db:"updated_at"`
