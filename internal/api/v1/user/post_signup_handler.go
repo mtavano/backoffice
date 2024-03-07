@@ -21,7 +21,6 @@ type PostSignupHandler struct {
 
 type postSignupHandlerRequest struct {
 	Email    string `db:"email"`
-	Nickname string `db:"nickname"`
 	Password string `db:"password"`
 }
 
@@ -57,7 +56,6 @@ func (h *PostSignupHandler) invoke(ctx *context.Ctx, req *postSignupHandlerReque
 	record := &userdb.Record{
 		ID:             h.idGenerate(),
 		Email:          req.Email,
-		Nickname:       req.Nickname,
 		HashedPassword: string(hashedPassword),
 		Verified:       false,
 		CreatedAt:      time.Now(),

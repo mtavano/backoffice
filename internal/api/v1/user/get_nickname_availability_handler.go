@@ -2,13 +2,13 @@ package user
 
 import (
 	"github.com/darchlabs/backoffice/internal/api/context"
-	userdb "github.com/darchlabs/backoffice/internal/storage/user"
+	profiledb "github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
 type GetNicknameAvailabilityHandler struct {
-	selectUserByNickname selectUserByNickname
+	selectProfileByNicknameQuery selectProfileByNicknameQuery
 }
 
 type getNicknameAvailabilityResponse struct {
@@ -21,8 +21,8 @@ func (h *GetNicknameAvailabilityHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) 
 		return nil, fiber.StatusBadRequest, errors.New("invalid nickname")
 	}
 
-	_, err := h.selectUserByNickname(ctx.App.SqlStore, nn)
-	if errors.Is(err, userdb.ErrNotFound) {
+	_, err := h.selectProfileByNicknameQuery(ctx.App.SqlStore, nn)
+	if errors.Is(err, profiledb.ErrNoProfile) {
 		return &getNicknameAvailabilityResponse{
 			Available: true,
 		}, fiber.StatusOK, nil

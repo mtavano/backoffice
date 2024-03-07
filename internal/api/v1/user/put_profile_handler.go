@@ -24,12 +24,14 @@ type PutProfileRequest struct {
 	UserID  string `json:"-"`
 	ShortID string `json:"-"`
 
-	Linkedin *string `json:"linkedin,omitempty"`
-	Email    *string `json:"email,omitempty"`
-	Whatsapp *string `json:"whatsapp,omitempty"`
-	Medium   *string `json:"medium,omitempty"`
-	TwitterX *string `json:"twitterX,omitempty"`
-	Website  *string `json:"website,omitempty"`
+	Linkedin    *string `json:"linkedin,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	Whatsapp    *string `json:"whatsapp,omitempty"`
+	Medium      *string `json:"medium,omitempty"`
+	TwitterX    *string `json:"twitterX,omitempty"`
+	Website     *string `json:"website,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Nickname    *string `json:"nickname,omitemtpy"`
 }
 
 func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
@@ -69,30 +71,7 @@ func (h *PutProfileHandler) invoke(
 		return nil, fiber.StatusInternalServerError, nil
 	}
 
-	input := &profile.UpsertProfileInput{
-		UserID:  req.UserID,
-		ShortID: req.ShortID,
-		Time:    time.Now(),
-	}
-
-	if req.Linkedin != nil {
-		input.Linkedin = req.Linkedin
-	}
-	if req.Email != nil {
-		input.Email = req.Email
-	}
-	if req.Whatsapp != nil {
-		input.Whatsapp = req.Whatsapp
-	}
-	if req.Medium != nil {
-		input.Medium = req.Medium
-	}
-	if req.Whatsapp != nil {
-		input.Whatsapp = req.Whatsapp
-	}
-	if req.TwitterX != nil {
-		input.TwitterX = req.TwitterX
-	}
+	input := assignValues(req)
 
 	r, err := h.upsertProfileQuery(ctx.App.SqlStore, input)
 	if err != nil {
@@ -113,4 +92,39 @@ func (h *PutProfileHandler) invoke(
 		"status":  "updated",
 		"profile": presented,
 	}, status, nil
+}
+
+func assignValues(req *PutProfileRequest) *profile.UpsertProfileInput {
+	input := &profile.UpsertProfileInput{
+		UserID:  req.UserID,
+		ShortID: req.ShortID,
+		Time:    time.Now(),
+	}
+
+	if req.Linkedin != nil {
+		input.Linkedin = req.Linkedin
+	}
+	if req.Email != nil {
+		input.Email = req.Email
+	}
+	if req.Whatsapp != nil {
+		input.Whatsapp = req.Whatsapp
+	}
+	if req.Medium != nil {
+		input.Medium = req.Medium
+	}
+	if req.Website != nil {
+		input.Website = req.Website
+	}
+	if req.TwitterX != nil {
+		input.TwitterX = req.TwitterX
+	}
+	if req.Description != nil {
+		input.Description = req.Description
+	}
+	if req.Nickname != nil {
+		input.Nickname = req.Nickname
+	}
+
+	return input
 }

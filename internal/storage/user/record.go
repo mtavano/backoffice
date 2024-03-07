@@ -8,7 +8,6 @@ import (
 type Record struct {
 	ID             string     `db:"id"`
 	Email          string     `db:"email"`
-	Nickname       string     `db:"nickname"`
 	HashedPassword string     `db:"hashed_password"`
 	Verified       bool       `db:"verified"`
 	CreatedAt      time.Time  `db:"created_at"`

@@ -10,14 +10,12 @@ func InsertQuery(tx storage.QueryContext, record *Record) error {
 		INSERT INTO users (
 			id,
 			email,
-			nickname,
 			hashed_password,
 			verified,
 			created_at
-		) VALUES ($1, $2, $3, $4, $5, $6);`,
+		) VALUES ($1, $2, $3, $4, $5);`,
 		record.ID,
 		record.Email,
-		record.Nickname,
 		record.HashedPassword,
 		record.Verified,
 		record.CreatedAt,

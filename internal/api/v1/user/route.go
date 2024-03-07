@@ -51,7 +51,7 @@ func Route(basePath string, ctx *context.Ctx) {
 	}
 
 	getNicknameAvailabilityHandler := &GetNicknameAvailabilityHandler{
-		selectUserByNickname: userdb.SelectByNicknameQuery,
+		selectProfileByNicknameQuery: profiledb.SelectByNicknameQuery,
 	}
 
 	// setup middleware

@@ -1,4 +1,4 @@
-package user
+package profile
 
 import (
 	"database/sql"
@@ -11,15 +11,15 @@ func SelectByNicknameQuery(tx storage.Transaction, nn string) (*Record, error) {
 	var record Record
 	err := tx.Get(&record, `
 		SELECT *
-		FROM users
+		FROM profiles
 		WHERE nickname = $1;`,
 		nn,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, ErrNotFound
+		return nil, ErrNoProfile
 	}
 	if err != nil {
-		return nil, errors.Wrap(err, "user: SelectByNickname tx.Get error")
+		return nil, errors.Wrap(err, "profile: SelectByNickname tx.Get error")
 	}
 	return &record, nil
 }

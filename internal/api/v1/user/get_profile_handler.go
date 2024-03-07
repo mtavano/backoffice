@@ -26,18 +26,19 @@ type getProfileHandlerRequest struct {
 
 type getProfileHandlerResponse struct {
 	Status   string `json:"status"`
-	Nickname string `json:"nickname,omitemtpy"`
 	ShortID  string `json:"shortId,omitemtpy"`
 	Owner    bool   `json:"owner"`
 	CanClaim bool   `json:"canClaim"` // TODO: fillme
 
 	// Social network links
-	Linkedin *string `json:"linkedin,omitemtpy"`
-	Email    *string `json:"email,omitemtpy"`
-	Whatsapp *string `json:"whatsapp,omitemtpy"`
-	Medium   *string `json:"medium,omitemtpy"`
-	TwitterX *string `json:"twitterX,omitemtpy"`
-	Website  *string `json:"website,omitemtpy"`
+	Linkedin    *string `json:"linkedin,omitemtpy"`
+	Email       *string `json:"email,omitemtpy"`
+	Whatsapp    *string `json:"whatsapp,omitemtpy"`
+	Medium      *string `json:"medium,omitemtpy"`
+	TwitterX    *string `json:"twitterX,omitemtpy"`
+	Website     *string `json:"website,omitemtpy"`
+	Description *string `json:"description,omitempty"`
+	Nickname    *string `json:"nickname,omitemtpy"`
 
 	// Non available fort the moment
 	//Image string `json:"image"`
@@ -52,7 +53,6 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 	log.Printf("[pkg: user] GetProfileHandler.Invoke [short_id: '%s'] [nickname: '%s'] ", shortID, nickname)
 
 	userID, _ := context.GetUserIDFromRequestCtx(c)
-	fmt.Println("0------- ", userID)
 
 	return h.invoke(ctx, &getProfileHandlerRequest{
 		ShortID:  shortID,
@@ -104,6 +104,8 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 			ShortID: card.ShortID,
 		}, fiber.StatusOK, nil
 	}
+
+	fmt.Println("~~~~~~> ", profile)
 
 	return &getProfileHandlerResponse{
 		Status:    card.Status,

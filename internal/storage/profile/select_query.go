@@ -13,11 +13,21 @@ type SelectFilters struct {
 }
 
 func SelectQuery(tx storage.Transaction, filters *SelectFilters) (*Record, error) {
+	var r *Record
 	if filters.ShortID != "" {
-		return selectByShortID(tx, filters.ShortID)
+		rr, err := selectByShortID(tx, filters.ShortID)
+		if err != nil {
+			return nil, err
+		}
+		return rr, nil
 	}
 
-	return selectByNickname(tx, filters.Nickname)
+	r, err := selectByNickname(tx, filters.Nickname)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func selectByShortID(tx storage.Transaction, shortID string) (*Record, error) {
@@ -40,24 +50,10 @@ func selectByShortID(tx storage.Transaction, shortID string) (*Record, error) {
 func selectByNickname(tx storage.Transaction, nickname string) (*Record, error) {
 	var record Record
 	err := tx.Get(&record, `
-	SELECT
-    p.email,
-    p.short_id,
-    p.linkedin,
-    p.email,
-    p.whatsapp,
-    p.medium,
-    p.website,
-    p.twitter_x,
-    p.image,
-		p.created_at,
-		p.updated_at
-	FROM
-    users u
-	JOIN
-    profiles p ON u.id = p.user_id
+	SELECT *
+	FROM profiles p
 	WHERE
-    u.nickname = $1;`,
+    p.nickname = $1;`,
 		nickname,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -67,6 +63,5 @@ func selectByNickname(tx storage.Transaction, nickname string) (*Record, error) 
 		return nil, errors.Wrap(err, "profile: SelectByNickname tx.Get error")
 	}
 
-	record.Nickname = nickname
 	return &record, nil
 }
