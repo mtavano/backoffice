@@ -105,8 +105,6 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		}, fiber.StatusOK, nil
 	}
 
-	fmt.Println("~~~~~~> ", profile)
-
 	return &getProfileHandlerResponse{
 		Status:    card.Status,
 		CanClaim:  profile.UserID != req.ShortID,

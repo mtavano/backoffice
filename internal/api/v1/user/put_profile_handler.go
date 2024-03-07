@@ -122,7 +122,7 @@ func assignValues(req *PutProfileRequest) *profile.UpsertProfileInput {
 	if req.Description != nil {
 		input.Description = req.Description
 	}
-	if req.Nickname != nil {
+	if req.Nickname != nil && *req.Nickname != "" {
 		input.Nickname = req.Nickname
 	}
 
