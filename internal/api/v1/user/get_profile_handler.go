@@ -107,7 +107,7 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 
 	return &getProfileHandlerResponse{
 		Status:    card.Status,
-		CanClaim:  profile.UserID != req.ShortID,
+		CanClaim:  profile.UserID != req.UserID,
 		Owner:     req.UserID == profile.UserID, // TODO: fix me
 		Nickname:  profile.Nickname,
 		ShortID:   profile.ShortID,
