@@ -114,6 +114,7 @@ func hydrateInput(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
 		Description: req.Description,
 		Time:        time.Now(),
 	}
+	log.Printf("[handler] put profile input %+v", input)
 
 	return input, nil
 }
