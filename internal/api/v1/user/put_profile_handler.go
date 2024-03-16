@@ -24,14 +24,15 @@ type PutProfileRequest struct {
 	UserID  string `json:"-"`
 	ShortID string `json:"-"`
 
-	Linkedin    *string `json:"linkedin,omitempty"`
-	Email       *string `json:"email,omitempty"`
-	Whatsapp    *string `json:"whatsapp,omitempty"`
-	Medium      *string `json:"medium,omitempty"`
-	TwitterX    *string `json:"twitterX,omitempty"`
-	Website     *string `json:"website,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Nickname    *string `json:"nickname,omitemtpy"`
+	Linkedin    *string `json:"linkedin,omitempty" validate:"omitempty,nonempty"`
+	Email       *string `json:"email,omitempty" validate:"omitempty,nonempty"`
+	Whatsapp    *string `json:"whatsapp,omitempty" validate:"omitempty,nonempty"`
+	Medium      *string `json:"medium,omitempty" validate:"omitempty,nonempty"`
+	TwitterX    *string `json:"twitterX,omitempty" validate:"omitempty,nonempty"`
+	Website     *string `json:"website,omitempty" validate:"omitempty,nonempty"`
+	Instagram   *string `json:"instagram,omitempty" validate:"omitempty,nonempty"`
+	Description *string `json:"description,omitempty" validate:"omitempty,nonempty"`
+	//Nickname    *string `json:"nickname,omitempty" validate:"omitempty,nonempty"`
 }
 
 func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
@@ -49,6 +50,10 @@ func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 	err = c.BodyParser(&req)
 	if err != nil {
 		return nil, fiber.StatusBadRequest, errors.Wrap(err, "invalid body input")
+	}
+	err = ctx.Validator.Struct(req)
+	if err != nil {
+		return nil, fiber.StatusBadRequest, err
 	}
 
 	req.UserID = userID
@@ -71,7 +76,10 @@ func (h *PutProfileHandler) invoke(
 		return nil, fiber.StatusInternalServerError, nil
 	}
 
-	input := assignValues(req)
+	input, err := assignValues(req)
+	if err != nil {
+		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "setting values error")
+	}
 
 	r, err := h.upsertProfileQuery(ctx.App.SqlStore, input)
 	if err != nil {
@@ -94,7 +102,7 @@ func (h *PutProfileHandler) invoke(
 	}, status, nil
 }
 
-func assignValues(req *PutProfileRequest) *profile.UpsertProfileInput {
+func assignValues(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
 	input := &profile.UpsertProfileInput{
 		UserID:  req.UserID,
 		ShortID: req.ShortID,
@@ -122,9 +130,9 @@ func assignValues(req *PutProfileRequest) *profile.UpsertProfileInput {
 	if req.Description != nil {
 		input.Description = req.Description
 	}
-	if req.Nickname != nil && *req.Nickname != "" {
-		input.Nickname = req.Nickname
-	}
+	//if req.Nickname != nil && *req.Nickname != "" {
+	//input.Nickname = req.Nickname
+	//}
 
-	return input
+	return input, nil
 }

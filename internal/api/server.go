@@ -48,10 +48,14 @@ func NewServer(config *ServerConfig) *Server {
 
 func (s *Server) Start(app *application.App) error {
 	go func() {
-		ctx := context.New(&context.Config{
+		ctx, err := context.New(&context.Config{
 			Server: s.server,
 			App:    s.app,
 		})
+		if err != nil {
+			panic(err)
+		}
+
 		// route endpoints
 		v1.HealthRoute(ctx)
 		user.Route("/api/v1/users", ctx)
@@ -65,7 +69,7 @@ func (s *Server) Start(app *application.App) error {
 		))
 
 		// sever listen
-		err := s.server.Listen(fmt.Sprintf(":%s", s.port))
+		err = s.server.Listen(fmt.Sprintf(":%s", s.port))
 		if err != nil {
 			panic(err)
 		}

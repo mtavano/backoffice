@@ -54,6 +54,10 @@ func Route(basePath string, ctx *context.Ctx) {
 		selectProfileByNicknameQuery: profiledb.SelectByNicknameQuery,
 	}
 
+	putNicknameHandler := &PutNicknameHandler{
+		upsertProfileQuery: profiledb.UpsertQuery,
+	}
+
 	// setup middleware
 	cl := client.New(&client.Config{
 		Client:  http.DefaultClient,
@@ -84,6 +88,11 @@ func Route(basePath string, ctx *context.Ctx) {
 		fmt.Sprintf("%s/profiles", basePath),
 		auth.Middleware(false),
 		v1.HandleFunc(ctx, getProfileHandler.Invoke),
+	)
+	ctx.Server.Put(
+		fmt.Sprintf("%s/profiles/:short_id/nn", basePath),
+		auth.Middleware(true),
+		v1.HandleFunc(ctx, putNicknameHandler.Invoke),
 	)
 	ctx.Server.Put(
 		fmt.Sprintf("%s/profiles/:short_id", basePath),
