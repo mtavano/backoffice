@@ -55,7 +55,7 @@ func Route(basePath string, ctx *context.Ctx) {
 	}
 
 	putNicknameHandler := &PutNicknameHandler{
-		upsertProfileQuery: profiledb.UpsertQuery,
+		updateNicknameQuery: profiledb.UpdateNicknameQuery,
 	}
 
 	// setup middleware

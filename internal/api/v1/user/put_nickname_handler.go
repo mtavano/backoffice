@@ -2,13 +2,16 @@ package user
 
 import (
 	"github.com/darchlabs/backoffice/internal/api/context"
+	"github.com/darchlabs/backoffice/internal/storage"
 	"github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
+type updateNicknameQuery func(storage.Transaction, *profile.UpdateNicknameInput) (*profile.Record, error)
+
 type PutNicknameHandler struct {
-	upsertProfileQuery profileUpsertQuery
+	updateNicknameQuery updateNicknameQuery
 }
 
 type PutNicknameRequest struct {
@@ -40,7 +43,8 @@ func (h *PutNicknameHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}
 }
 
 func (h *PutNicknameHandler) invoke(ctx *context.Ctx, req *PutNicknameRequest) (interface{}, int, error) {
-	_, err := h.upsertProfileQuery(ctx.App.SqlStore, &profile.UpsertProfileInput{
+	_, err := h.updateNicknameQuery(ctx.App.SqlStore, &profile.UpdateNicknameInput{
+		ShortID:  req.ShortID,
 		UserID:   req.UserID,
 		Nickname: req.Nickname,
 	})

@@ -19,7 +19,6 @@ type UpsertProfileInput struct {
 	TwitterX    *string
 	Website     *string
 	Description *string
-	Nickname    *string
 
 	Time time.Time
 }
@@ -38,9 +37,7 @@ func UpsertQuery(tx storage.Transaction, input *UpsertProfileInput) (*Record, er
 				website,    -- 7
 				created_at, -- 8
 				twitter_x,   -- 9
-				description, -- 10
-				nickname -- 11
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		ON CONFLICT (short_id) -- Add short_id to the conflict target
 		DO UPDATE
 		SET 
@@ -50,8 +47,6 @@ func UpsertQuery(tx storage.Transaction, input *UpsertProfileInput) (*Record, er
 				medium =$6,
 				website =$7,
 				twitter_x =$9,
-				description =$10,
-				nickname =$11,
 				updated_at = $8
 		WHERE profiles.short_id = $2 
 		AND profiles.user_id = $1 -- Match both user_id and short_id
@@ -66,8 +61,6 @@ func UpsertQuery(tx storage.Transaction, input *UpsertProfileInput) (*Record, er
 		input.Website,
 		input.Time,
 		input.TwitterX,
-		input.Description,
-		input.Nickname,
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "profile: UpsertQuery tx.Exec error")
