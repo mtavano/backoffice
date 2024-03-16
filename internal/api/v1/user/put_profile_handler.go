@@ -102,16 +102,15 @@ func (h *PutProfileHandler) invoke(
 
 func hydrateInput(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
 	input := &profile.UpsertProfileInput{
-		UserID:      req.UserID,
-		ShortID:     req.ShortID,
-		Linkedin:    req.Linkedin,
-		Email:       req.Email,
-		Whatsapp:    req.Whatsapp,
-		Medium:      req.Medium,
-		TwitterX:    req.TwitterX,
-		Website:     req.Website,
-		Description: req.Description,
-		Time:        time.Now(),
+		UserID:   req.UserID,
+		ShortID:  req.ShortID,
+		Linkedin: req.Linkedin,
+		Email:    req.Email,
+		Whatsapp: req.Whatsapp,
+		Medium:   req.Medium,
+		TwitterX: req.TwitterX,
+		Website:  req.Website,
+		Time:     time.Now(),
 	}
 	log.Printf("[handler] put profile input %+v", input)
 
