@@ -24,14 +24,13 @@ type PutProfileRequest struct {
 	UserID  string `json:"-"`
 	ShortID string `json:"-"`
 
-	Linkedin    *string `json:"linkedin,omitempty" validate:"omitempty,nonempty"`
-	Email       *string `json:"email,omitempty" validate:"omitempty,nonempty"`
-	Whatsapp    *string `json:"whatsapp,omitempty" validate:"omitempty,nonempty"`
-	Medium      *string `json:"medium,omitempty" validate:"omitempty,nonempty"`
-	TwitterX    *string `json:"twitterX,omitempty" validate:"omitempty,nonempty"`
-	Website     *string `json:"website,omitempty" validate:"omitempty,nonempty"`
-	Instagram   *string `json:"instagram,omitempty" validate:"omitempty,nonempty"`
-	Description *string `json:"description,omitempty" validate:"omitempty,nonempty"`
+	Linkedin *string `json:"linkedin,omitempty" validate:"omitempty,nonempty"`
+	Email    *string `json:"email,omitempty" validate:"omitempty,nonempty"`
+	Whatsapp *string `json:"whatsapp,omitempty" validate:"omitempty,nonempty"`
+	Medium   *string `json:"medium,omitempty" validate:"omitempty,nonempty"`
+	TwitterX *string `json:"twitterX,omitempty" validate:"omitempty,nonempty"`
+	Website  *string `json:"website,omitempty" validate:"omitempty,nonempty"`
+	// Instagram *string `json:"instagram,omitempty" validate:"omitempty,nonempty"`
 }
 
 func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {

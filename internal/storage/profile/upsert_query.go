@@ -36,7 +36,7 @@ func UpsertQuery(tx storage.Transaction, input *UpsertProfileInput) (*Record, er
 				medium,     -- 6
 				website,    -- 7
 				created_at, -- 8
-				twitter_x,   -- 9
+				twitter_x   -- 9
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		ON CONFLICT (short_id) -- Add short_id to the conflict target
 		DO UPDATE
