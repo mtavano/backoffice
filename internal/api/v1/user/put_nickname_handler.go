@@ -43,7 +43,7 @@ func (h *PutNicknameHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}
 }
 
 func (h *PutNicknameHandler) invoke(ctx *context.Ctx, req *PutNicknameRequest) (interface{}, int, error) {
-	_, err := h.updateNicknameQuery(ctx.App.SqlStore, &profile.UpdateNicknameInput{
+	r, err := h.updateNicknameQuery(ctx.App.SqlStore, &profile.UpdateNicknameInput{
 		ShortID:  req.ShortID,
 		UserID:   req.UserID,
 		Nickname: req.Nickname,
@@ -52,5 +52,5 @@ func (h *PutNicknameHandler) invoke(ctx *context.Ctx, req *PutNicknameRequest) (
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "upsert profile error")
 	}
 
-	return nil, fiber.StatusOK, nil
+	return r, fiber.StatusOK, nil
 }
