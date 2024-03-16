@@ -53,9 +53,6 @@ func (c *Ctx) PresentRecord(v interface{}, status int) (interface{}, int, error)
 
 	transformed := make(map[string]interface{})
 	for key, value := range result {
-		if value == nil {
-			continue
-		}
 		k := fmt.Sprintf("%s%s", strings.ToLower(key[:1]), key[1:])
 		transformed[k] = value
 	}
