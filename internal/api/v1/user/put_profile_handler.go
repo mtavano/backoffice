@@ -75,7 +75,7 @@ func (h *PutProfileHandler) invoke(
 		return nil, fiber.StatusInternalServerError, nil
 	}
 
-	input, err := assignValues(req)
+	input, err := hydrateInput(req)
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "setting values error")
 	}
@@ -101,37 +101,19 @@ func (h *PutProfileHandler) invoke(
 	}, status, nil
 }
 
-func assignValues(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
+func hydrateInput(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
 	input := &profile.UpsertProfileInput{
-		UserID:  req.UserID,
-		ShortID: req.ShortID,
-		Time:    time.Now(),
+		UserID:      req.UserID,
+		ShortID:     req.ShortID,
+		Linkedin:    req.Linkedin,
+		Email:       req.Email,
+		Whatsapp:    req.Whatsapp,
+		Medium:      req.Medium,
+		TwitterX:    req.TwitterX,
+		Website:     req.Website,
+		Description: req.Description,
+		Time:        time.Now(),
 	}
-
-	if req.Linkedin != nil {
-		input.Linkedin = req.Linkedin
-	}
-	if req.Email != nil {
-		input.Email = req.Email
-	}
-	if req.Whatsapp != nil {
-		input.Whatsapp = req.Whatsapp
-	}
-	if req.Medium != nil {
-		input.Medium = req.Medium
-	}
-	if req.Website != nil {
-		input.Website = req.Website
-	}
-	if req.TwitterX != nil {
-		input.TwitterX = req.TwitterX
-	}
-	if req.Description != nil {
-		input.Description = req.Description
-	}
-	//if req.Nickname != nil && *req.Nickname != "" {
-	//input.Nickname = req.Nickname
-	//}
 
 	return input, nil
 }
