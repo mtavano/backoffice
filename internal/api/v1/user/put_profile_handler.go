@@ -32,7 +32,6 @@ type PutProfileRequest struct {
 	Website     *string `json:"website,omitempty" validate:"omitempty,nonempty"`
 	Instagram   *string `json:"instagram,omitempty" validate:"omitempty,nonempty"`
 	Description *string `json:"description,omitempty" validate:"omitempty,nonempty"`
-	//Nickname    *string `json:"nickname,omitempty" validate:"omitempty,nonempty"`
 }
 
 func (h *PutProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, int, error) {
