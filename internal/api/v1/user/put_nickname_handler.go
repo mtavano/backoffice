@@ -52,5 +52,18 @@ func (h *PutNicknameHandler) invoke(ctx *context.Ctx, req *PutNicknameRequest) (
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "upsert profile error")
 	}
 
-	return r, fiber.StatusOK, nil
+	return map[string]interface{}{
+		"status": "updated",
+		"profile": &userProfileResponse{
+			ShortID:     r.ShortID,
+			Linkedin:    r.Linkedin,
+			Email:       r.Email,
+			Whatsapp:    r.Whatsapp,
+			Medium:      r.Medium,
+			TwitterX:    r.TwitterX,
+			Website:     r.Website,
+			Description: r.Description,
+			Nickname:    r.Nickname,
+		},
+	}, fiber.StatusOK, nil
 }

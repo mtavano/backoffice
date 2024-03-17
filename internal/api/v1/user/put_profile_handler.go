@@ -89,15 +89,20 @@ func (h *PutProfileHandler) invoke(
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "cannot update card record error")
 	}
 
-	presented, status, err := ctx.PresentRecord(r, fiber.StatusOK)
-	if err != nil {
-		return nil, status, errors.Wrap(err, "upsert profile error")
-	}
-
 	return map[string]interface{}{
-		"status":  "updated",
-		"profile": presented,
-	}, status, nil
+		"status": "updated",
+		"profile": &userProfileResponse{
+			ShortID:     r.ShortID,
+			Linkedin:    r.Linkedin,
+			Email:       r.Email,
+			Whatsapp:    r.Whatsapp,
+			Medium:      r.Medium,
+			TwitterX:    r.TwitterX,
+			Website:     r.Website,
+			Description: r.Description,
+			Nickname:    r.Nickname,
+		},
+	}, fiber.StatusOK, nil
 }
 
 func hydrateInput(req *PutProfileRequest) (*profile.UpsertProfileInput, error) {
