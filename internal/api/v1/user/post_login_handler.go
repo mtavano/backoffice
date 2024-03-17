@@ -5,6 +5,7 @@ import (
 
 	"github.com/darchlabs/backoffice/internal/api/context"
 	authdb "github.com/darchlabs/backoffice/internal/storage/auth"
+	"github.com/darchlabs/backoffice/internal/storage/profile"
 	userdb "github.com/darchlabs/backoffice/internal/storage/user"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
@@ -16,15 +17,18 @@ type PostLoginHandler struct {
 	secretKey              string
 	userSelectByEmailQuery userSelectByEmailQuery
 	authUpsertQuery        authUpsertQuery
+	selectProfileQuery     selectProfileQuery
 }
 
 type postLoginHandlerRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Nickname string `json:"nickname"`
 }
 
 type postLoginHandlerResponse struct {
-	Token string `json:"token"`
+	Token   string               `json:"token"`
+	Profile *userProfileResponse `json:"profile,omitempty"`
 }
 
 type loginClaims struct {
@@ -41,12 +45,7 @@ func (h *PostLoginHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{}, 
 		)
 	}
 
-	payload, status, err := h.invoke(ctx, &req)
-	if err != nil {
-		return nil, status, errors.Wrap(err, "user: PostLoginHandler.Invoke h.invoke error")
-	}
-
-	return payload, status, nil
+	return h.invoke(ctx, &req)
 }
 
 func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest) (interface{}, int, error) {
@@ -88,5 +87,31 @@ func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "auth: PostLoginHandler.invoke h.authUpsertQuery error")
 	}
 
-	return &postLoginHandlerResponse{Token: signedToken}, fiber.StatusCreated, nil
+	var p *profile.Record
+	p, e := h.selectProfileQuery(ctx.App.SqlStore, &profile.SelectFilters{
+		UserID: user.ID,
+	})
+	if errors.Is(e, profile.ErrInvalidFilters) || errors.Is(e, profile.ErrNoProfile) {
+		return &postLoginHandlerResponse{
+			Token: signedToken,
+		}, fiber.StatusOK, nil
+	}
+	if e != nil {
+		return nil, fiber.StatusInternalServerError, errors.Wrap(e, "auth: PostLoginHandler.invoke h.selectProfileQuery error")
+	}
+
+	return &postLoginHandlerResponse{
+		Token: signedToken,
+		Profile: &userProfileResponse{
+			ShortID:     p.ShortID,
+			Linkedin:    p.Linkedin,
+			Email:       p.Email,
+			Whatsapp:    p.Whatsapp,
+			Medium:      p.Medium,
+			TwitterX:    p.TwitterX,
+			Website:     p.Website,
+			Description: p.Description,
+			Nickname:    p.Nickname,
+		},
+	}, fiber.StatusCreated, nil
 }

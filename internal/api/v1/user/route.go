@@ -31,6 +31,7 @@ func Route(basePath string, ctx *context.Ctx) {
 		secretKey:              ctx.App.Config.SecretKey,
 		userSelectByEmailQuery: userdb.SelectByEmailQuery,
 		authUpsertQuery:        authdb.UpsertQuery,
+		selectProfileQuery:     profiledb.SelectQuery,
 	}
 
 	postValidTokenHandler := &PostValidTokenHandler{

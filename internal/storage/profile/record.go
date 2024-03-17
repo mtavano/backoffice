@@ -6,6 +6,7 @@ import (
 )
 
 var ErrNoProfile = errors.New("profile: no profile erro")
+var ErrInvalidFilters = errors.New("profile: invalid filters for query")
 
 type Record struct {
 	UserID  string `db:"user_id"`
