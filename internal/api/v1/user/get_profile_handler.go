@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -93,19 +92,18 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		return nil, fiber.StatusNotFound, nil
 	}
 	if err != nil {
-		fmt.Println("HERE 2")
 		return nil, fiber.StatusInternalServerError, errors.Wrap(
 			err, "user: GetProfileHandler.Invoke h.selectCardsQuery error",
 		)
 	}
 	if card.Status == cards.StatusFree {
-		return &getProfileHandlerResponse{
+		return &userProfileResponse{
 			Status:  card.Status,
 			ShortID: card.ShortID,
 		}, fiber.StatusOK, nil
 	}
 
-	return &getProfileHandlerResponse{
+	return &userProfileResponse{
 		Status:    card.Status,
 		CanClaim:  profile.UserID != req.UserID,
 		Owner:     req.UserID == profile.UserID, // TODO: fix me

@@ -19,7 +19,6 @@ func InsertQuery(tx storage.Transaction, ids []string) error {
 		VALUES %s;`,
 		strings.Join(values, ","),
 	)
-	fmt.Println("query: ", query)
 
 	_, err := tx.Exec(query)
 	if err != nil {

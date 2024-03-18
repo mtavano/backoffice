@@ -84,7 +84,6 @@ func Route(basePath string, ctx *context.Ctx) {
 		fmt.Sprintf("%s/tokens", basePath),
 		v1.HandleFunc(ctx, postValidTokenHandler.Invoke),
 	)
-	fmt.Printf("%s/profiles\n", basePath)
 	ctx.Server.Get(
 		fmt.Sprintf("%s/profiles", basePath),
 		auth.Middleware(false),

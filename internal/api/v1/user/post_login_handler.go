@@ -27,8 +27,8 @@ type postLoginHandlerRequest struct {
 }
 
 type postLoginHandlerResponse struct {
-	Token   string               `json:"token"`
-	Profile *userProfileResponse `json:"profile,omitempty"`
+	Token   string  `json:"token"`
+	ShortID *string `json:"shortId,omitempty"`
 }
 
 type loginClaims struct {
@@ -101,17 +101,7 @@ func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest
 	}
 
 	return &postLoginHandlerResponse{
-		Token: signedToken,
-		Profile: &userProfileResponse{
-			ShortID:     p.ShortID,
-			Linkedin:    p.Linkedin,
-			Email:       p.Email,
-			Whatsapp:    p.Whatsapp,
-			Medium:      p.Medium,
-			TwitterX:    p.TwitterX,
-			Website:     p.Website,
-			Description: p.Description,
-			Nickname:    p.Nickname,
-		},
+		Token:   signedToken,
+		ShortID: &p.ShortID,
 	}, fiber.StatusCreated, nil
 }

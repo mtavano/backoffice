@@ -14,8 +14,6 @@ func main() {
 	//Client:  http.DefaultClient,
 	//})
 
-	//token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Impkb2VAZ21haWwuY29tIiwiZXhwIjoxNzE1ODQxNDA5fQ.DWAF9i07IgdnhZoyXHUsFQMzJ-6Hzz_-rD6rprpbCeo"
-
 	//res, err := cl.ValidToken(token)
 	//check(err)
 
