@@ -84,7 +84,6 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		)
 	}
 	currentUserHasNoProfile := currentProfile == nil
-	log.Println("[user] GetProfileHandler.Invoke")
 
 	sid := req.ShortID
 	if requestedProfile != nil {
@@ -93,7 +92,7 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 
 	card, err := h.selectCardsQuery(ctx.App.SqlStore, sid)
 	if errors.Is(err, cards.ErrNoCard) {
-		log.Printf("[error] GetProfileHandler.invoke application corrupted")
+		log.Printf("[user] [error] GetProfileHandler.invoke application corrupted")
 		return nil, fiber.StatusNotFound, nil
 	}
 	if err != nil {
