@@ -2,7 +2,6 @@ package profile
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/darchlabs/backoffice/internal/storage"
 	"github.com/pkg/errors"
@@ -81,7 +80,6 @@ func selectByUserID(tx storage.Transaction, userID string) (*Record, error) {
 		userID,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
-		log.Println("errrorrrrrr")
 		return nil, ErrNoProfile
 	}
 	if err != nil {

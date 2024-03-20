@@ -6,7 +6,6 @@ import (
 
 	"github.com/darchlabs/backoffice/internal/api/context"
 	"github.com/darchlabs/backoffice/internal/storage/cards"
-	cardsdb "github.com/darchlabs/backoffice/internal/storage/cards"
 	profiledb "github.com/darchlabs/backoffice/internal/storage/profile"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -63,7 +62,6 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 
 func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerRequest) (interface{}, int, error) {
 	var requestedProfile *profiledb.Record
-	var card *cardsdb.Record
 	requestedProfile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
 		ShortID:  req.ShortID,
 		Nickname: req.Nickname,
@@ -86,13 +84,14 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		)
 	}
 	currentUserHasNoProfile := currentProfile == nil
+	log.Println("[user] GetProfileHandler.Invoke")
 
 	sid := req.ShortID
 	if requestedProfile != nil {
 		sid = requestedProfile.ShortID
 	}
 
-	card, err = h.selectCardsQuery(ctx.App.SqlStore, sid)
+	card, err := h.selectCardsQuery(ctx.App.SqlStore, sid)
 	if errors.Is(err, cards.ErrNoCard) {
 		log.Printf("[error] GetProfileHandler.invoke application corrupted")
 		return nil, fiber.StatusNotFound, nil
@@ -108,6 +107,7 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 			ShortID: card.ShortID,
 		}, fiber.StatusOK, nil
 	}
+	log.Printf("[user] GetProfileHandler.Invoke [card_status: %s] [currentUserHasNoProfile: %t]", card.Status, currentUserHasNoProfile)
 
 	return &userProfileResponse{
 		Status:    card.Status,
