@@ -113,7 +113,7 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 	return &userProfileResponse{
 		Status:    card.Status,
 		CanClaim:  card.Status == cards.StatusFree && currentUserHasNoProfile,
-		Owner:     currentProfile.UserID == requestedProfile.UserID,
+		Owner:     req.UserID == requestedProfile.UserID,
 		Nickname:  requestedProfile.Nickname,
 		ShortID:   requestedProfile.ShortID,
 		Linkedin:  requestedProfile.Linkedin,
