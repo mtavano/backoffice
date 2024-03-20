@@ -67,28 +67,23 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		ShortID:  req.ShortID,
 		Nickname: req.Nickname,
 	})
-	log.Printf("[user] GetProfileHandler.Invoke step 2")
 	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
-	log.Printf("[user] GetProfileHandler.Invoke step 3")
 	// we cannot continue with process
 	if requestedProfile == nil && req.ShortID == "" {
 		return nil, fiber.StatusNotFound, errors.Wrap(err, "00 something went wrong during operation error")
 	}
 
-	log.Printf("[user] GetProfileHandler.Invoke step 4")
 	currentProfile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
 		UserID: req.UserID,
 	})
-	log.Printf("[user] GetProfileHandler.Invoke step 5")
 	if !errors.Is(err, profiledb.ErrNoProfile) {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(
 			err,
 			"user: GetProfileHandler.Invoke h.selectProfileQuery error",
 		)
 	}
-	log.Printf("[user] GetProfileHandler.Invoke step 6")
 	currentUserHasNoProfile := currentProfile == nil
 
 	sid := req.ShortID
@@ -96,23 +91,21 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		sid = requestedProfile.ShortID
 	}
 
-	log.Printf("[user] GetProfileHandler.Invoke step 7")
 	card, err := h.selectCardsQuery(ctx.App.SqlStore, sid)
 	if errors.Is(err, cards.ErrNoCard) {
 		log.Printf("[user] [error] GetProfileHandler.invoke application corrupted")
 		return nil, fiber.StatusNotFound, nil
 	}
-	log.Printf("[user] GetProfileHandler.Invoke step 8")
 	if err != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(
 			err, "user: GetProfileHandler.Invoke h.selectCardsQuery error",
 		)
 	}
-	log.Printf("[user] GetProfileHandler.Invoke step 9")
 	if card.Status == cards.StatusFree {
 		return &userProfileResponse{
-			Status:  card.Status,
-			ShortID: card.ShortID,
+			Status:   card.Status,
+			ShortID:  card.ShortID,
+			CanClaim: card.Status == cards.StatusFree && currentUserHasNoProfile,
 		}, fiber.StatusOK, nil
 	}
 	log.Printf("[user] GetProfileHandler.Invoke [card_status: %s] [curre_user_has_no_profile: %t]", card.Status, currentUserHasNoProfile)
