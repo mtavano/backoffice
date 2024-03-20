@@ -71,6 +71,10 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
+	// we cannot continue with process
+	if requestedProfile == nil && req.ShortID == "" {
+		return nil, fiber.StatusNotFound, errors.Wrap(err, "00 something went wrong during operation error")
+	}
 
 	currentProfile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
 		UserID: req.UserID,
@@ -83,7 +87,12 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 	}
 	currentUserHasNoProfile := currentProfile == nil
 
-	card, err = h.selectCardsQuery(ctx.App.SqlStore, requestedProfile.ShortID)
+	sid := req.ShortID
+	if requestedProfile != nil {
+		sid = requestedProfile.ShortID
+	}
+
+	card, err = h.selectCardsQuery(ctx.App.SqlStore, sid)
 	if errors.Is(err, cards.ErrNoCard) {
 		log.Printf("[error] GetProfileHandler.invoke application corrupted")
 		return nil, fiber.StatusNotFound, nil
