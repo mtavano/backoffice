@@ -62,33 +62,33 @@ func (h *GetProfileHandler) Invoke(ctx *context.Ctx, c *fiber.Ctx) (interface{},
 }
 
 func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerRequest) (interface{}, int, error) {
-	var profile *profiledb.Record
+	var requestedProfile *profiledb.Record
 	var card *cardsdb.Record
-	profile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
+	requestedProfile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
 		ShortID:  req.ShortID,
 		Nickname: req.Nickname,
 	})
-	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
+	if errors.Is(err, profiledb.ErrNoProfile) {
+		return nil, fiber.StatusNotFound, nil
+	}
+	if err != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
 
-	if profile == nil && req.ShortID == "" {
-		return nil, fiber.StatusNotFound, nil
+	currentProfile, err := h.selectProfileQuery(ctx.App.SqlStore, &profiledb.SelectFilters{
+		UserID: req.UserID,
+	})
+	if !errors.Is(err, profiledb.ErrNoProfile) {
+		return nil, fiber.StatusInternalServerError, errors.Wrap(
+			err,
+			"user: GetProfileHandler.Invoke h.selectProfileQuery error",
+		)
 	}
+	currentUserHasNoProfile := currentProfile == nil
 
-	var sid string
-
-	switch true {
-	case profile != nil:
-		sid = profile.ShortID
-		break
-	case req.ShortID != "":
-		sid = req.ShortID
-		break
-	}
-
-	card, err = h.selectCardsQuery(ctx.App.SqlStore, sid)
+	card, err = h.selectCardsQuery(ctx.App.SqlStore, requestedProfile.ShortID)
 	if errors.Is(err, cards.ErrNoCard) {
+		log.Printf("[error] GetProfileHandler.invoke application corrupted")
 		return nil, fiber.StatusNotFound, nil
 	}
 	if err != nil {
@@ -105,16 +105,16 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 
 	return &userProfileResponse{
 		Status:    card.Status,
-		CanClaim:  profile.UserID != req.UserID,
-		Owner:     req.UserID == profile.UserID, // TODO: fix me
-		Nickname:  profile.Nickname,
-		ShortID:   profile.ShortID,
-		Linkedin:  profile.Linkedin,
-		Email:     profile.Email,
-		Whatsapp:  profile.Whatsapp,
-		Medium:    profile.Medium,
-		TwitterX:  profile.TwitterX,
-		Website:   profile.Website,
-		CreatedAt: profile.CreatedAt,
+		CanClaim:  card.Status == cards.StatusFree && currentUserHasNoProfile,
+		Owner:     currentProfile.UserID == requestedProfile.UserID,
+		Nickname:  requestedProfile.Nickname,
+		ShortID:   requestedProfile.ShortID,
+		Linkedin:  requestedProfile.Linkedin,
+		Email:     requestedProfile.Email,
+		Whatsapp:  requestedProfile.Whatsapp,
+		Medium:    requestedProfile.Medium,
+		TwitterX:  requestedProfile.TwitterX,
+		Website:   requestedProfile.Website,
+		CreatedAt: requestedProfile.CreatedAt,
 	}, fiber.StatusOK, nil
 }
