@@ -68,10 +68,7 @@ func (h *GetProfileHandler) invoke(ctx *context.Ctx, req *getProfileHandlerReque
 		ShortID:  req.ShortID,
 		Nickname: req.Nickname,
 	})
-	if errors.Is(err, profiledb.ErrNoProfile) {
-		return nil, fiber.StatusNotFound, nil
-	}
-	if err != nil {
+	if err != nil && !errors.Is(err, profiledb.ErrNoProfile) {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(err, "something went wrong during operation error")
 	}
 
