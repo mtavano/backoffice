@@ -94,7 +94,7 @@ func (h *PostLoginHandler) invoke(ctx *context.Ctx, req *postLoginHandlerRequest
 	if errors.Is(e, profile.ErrInvalidFilters) || errors.Is(e, profile.ErrNoProfile) {
 		return &postLoginHandlerResponse{
 			Token: signedToken,
-		}, fiber.StatusOK, nil
+		}, fiber.StatusCreated, nil
 	}
 	if e != nil {
 		return nil, fiber.StatusInternalServerError, errors.Wrap(e, "auth: PostLoginHandler.invoke h.selectProfileQuery error")
